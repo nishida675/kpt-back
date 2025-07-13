@@ -1,0 +1,21 @@
+[package]
+name = "kpt-back"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dotenv = "0.15"
+axum = { version = "0.7", features = ["macros"] }
+axum-extra = { version = "0.9", features = ["typed-header"] }
+tokio = { version = "1.0", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version="0.3", features = ["env-filter"] }
+askama = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+sqlx = { version = "0.7", features = ["runtime-tokio", "mysql", "macros", "chrono"] }
+argon2 = "0.5"
+async-session = "3"
+async-sqlx-session = { version = "0.4", features = ["mysql", "async_std"] }
+tower-http = { version = "0.5", features = ["cors"] }

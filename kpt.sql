@@ -1,0 +1,43 @@
+DROP TABLE IF EXISTS ticket;
+DROP TABLE IF EXISTS board;
+DROP TABLE IF EXISTS accounts;
+
+CREATE TABLE accounts (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    password VARCHAR(256) NOT NULL,
+    display_name VARCHAR(16) NOT NULL
+);
+
+CREATE TABLE board (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    created_by BIGINT UNSIGNED NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (created_by) REFERENCES accounts(id)
+);
+
+CREATE TABLE ticket (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    board_id BIGINT UNSIGNED NOT NULL,
+    author_id BIGINT UNSIGNED NOT NULL,
+    category ENUM('Keep', 'Problem', 'Try') NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (board_id) REFERENCES board(id),
+    FOREIGN KEY (author_id) REFERENCES accounts(id)
+);
+
+INSERT INTO accounts (password, display_name) VALUES
+('1', 'Alice'),
+('2', 'Bob'),
+('3', 'Charlie');
+
+INSERT INTO board (title, created_by) VALUES
+('プロジェクトAのKPT', 1),
+('サービス改善KPT', 1),
+('スプリント振り返り', 1);
+
