@@ -1,8 +1,7 @@
-use crate::controllers::boards::BoardSummary;
+
 use crate::entities::Ticket;
 use crate::repositories::tickets::Tickets;
 use crate::request::UserContext;
-use axum::Json;
 
 //チケットすべて取得
 pub async fn get_all_tickets(
