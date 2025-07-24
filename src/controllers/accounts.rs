@@ -4,20 +4,17 @@ use crate::services::{self};
 use axum::extract::Json;
 use axum::extract::State;
 use axum::http::StatusCode;
-use axum::{
-    Router,
-    response::{ IntoResponse},
-    routing,
-};
+use axum::{Router, response::IntoResponse, routing};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::sync::Arc;
 
 pub fn accounts(repos: Arc<Repositories>) -> Router {
+    let accounts_impl = repos.accounts.clone();
     Router::new()
         .route("/new", routing::post(post))
         .route("/session", routing::post(api_login))
-        .with_state(repos)
+        .with_state(accounts_impl)
 }
 
 async fn post(

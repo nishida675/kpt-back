@@ -2,20 +2,24 @@ use std::env;
 use std::time::Duration;
 
 use async_session::{Session, SessionStore};
-use async_sqlx_session::MySqlSessionStore;
+// use async_sqlx_session::MySqlSessionStore;
+use async_sqlx_session::PostgresSessionStore;
 
 use crate::constants::{AXUM_SESSION_COOKIE_NAME, AXUM_SESSION_USER_ID_KEY, ENV_KEY_DATABASE_URL};
-
 
 use crate::entities::Account;
 use crate::repositories::accounts::Accounts;
 
 pub async fn create_account(repo: &impl Accounts, password: &str, display_name: &str) {
-    let new_account = Account::create( password, display_name);
+    let new_account = Account::create(password, display_name);
     repo.store(&new_account).await;
 }
 
-pub async fn create_session(repo: &impl Accounts, display_name: &str, password: &str) -> Option<SessionToken> {
+pub async fn create_session(
+    repo: &impl Accounts,
+    display_name: &str,
+    password: &str,
+) -> Option<SessionToken> {
     let account = repo.find_by(display_name).await;
     if let Some(account) = account {
         if !account.matches_password(password) {
@@ -24,7 +28,11 @@ pub async fn create_session(repo: &impl Accounts, display_name: &str, password: 
 
         dotenv::dotenv().ok();
         let database_url = env::var(ENV_KEY_DATABASE_URL).unwrap();
-        let store = MySqlSessionStore::new(&database_url).await.unwrap();
+
+        // PostgresSessionStore に変更
+        let store = PostgresSessionStore::new(&database_url)
+            .await
+            .expect("failed to create PostgresSessionStore");
 
         let mut session = Session::new();
         session
@@ -50,6 +58,6 @@ impl SessionToken {
         )
     }
     pub fn value(&self) -> &str {
-    &self.0
-}
+        &self.0
+    }
 }

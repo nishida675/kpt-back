@@ -1,7 +1,7 @@
 use std::env;
 
 use async_session::SessionStore;
-use async_sqlx_session::MySqlSessionStore;
+use async_sqlx_session::PostgresSessionStore; 
 use axum::{
     extract::FromRequestParts,
     http::{request::Parts, StatusCode},
@@ -12,13 +12,11 @@ use serde_json::json;
 use axum_extra::headers::{Authorization, authorization::Bearer};
 use axum_extra::TypedHeader;
 
-
-
 use crate::constants::{AXUM_SESSION_COOKIE_NAME, AXUM_SESSION_USER_ID_KEY, ENV_KEY_DATABASE_URL};
 
 #[derive(Deserialize, Serialize)]
 pub struct UserContext {
-    pub user_id: u64,
+    pub user_id: i64,
 }
 
 #[axum::async_trait]
@@ -38,31 +36,32 @@ where
 
         dotenv::dotenv().ok();
         let database_url = env::var(ENV_KEY_DATABASE_URL).unwrap_or_default();
-        let store = MySqlSessionStore::new(&database_url)
+
+        // PostgreSQL用ストアを作成
+        let store = PostgresSessionStore::new(&database_url)
             .await
             .map_err(|_| error_response())?;
 
-        // ① AuthorizationヘッダーからBearerトークンを取得
+        // AuthorizationヘッダーからBearerトークン取得
         let TypedHeader(Authorization(bearer)) =
             TypedHeader::<Authorization<Bearer>>::from_request_parts(parts, state)
                 .await
                 .map_err(|_| error_response())?;
 
-        let token_str = bearer.token(); // トークン文字列
+        let token_str = bearer.token();
 
-        // ② セッションストアからセッションをロード
+        // セッションロード
         let session = store
             .load_session(token_str.to_string())
             .await
             .map_err(|_| error_response())?
             .ok_or_else(error_response)?;
 
-        // ③ セッションから user_id を取り出し
+        // user_id取得
         let user_id = session
-            .get::<u64>(AXUM_SESSION_USER_ID_KEY)
+            .get::<i64>(AXUM_SESSION_USER_ID_KEY)
             .ok_or_else(error_response)?;
 
         Ok(UserContext { user_id })
     }
 }
-

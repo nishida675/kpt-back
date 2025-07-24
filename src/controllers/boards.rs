@@ -40,7 +40,7 @@ pub async fn save_board_tickets(
 
     if let Some(title_id_str) = payload.titleId.clone() {
         // titleIdがある場合は更新処理
-        let title_id: u64 = match title_id_str.parse() {
+        let title_id: i64 = match title_id_str.parse() {
             Ok(id) => id,
             Err(_) => {
                 return (
@@ -81,7 +81,7 @@ pub async fn save_board_tickets(
                     };
 
                 // クライアント側から送られてきた有効なID一覧を収集
-                let received_ids: HashSet<u64> = payload
+                let received_ids: HashSet<i64> = payload
                     .projectData
                     .lists
                     .iter()
@@ -232,7 +232,7 @@ pub async fn save_board_tickets(
 
 pub async fn get_board_data(
     user_ctx: UserContext,
-    Path(title_id): Path<u64>,
+    Path(title_id): Path<i64>,
     State(repos): State<Arc<Repositories>>,
 ) -> Result<Json<BoardTicketSummary>, StatusCode> {
     let boards_repo = &repos.boards;
@@ -293,7 +293,7 @@ pub async fn get_board_data(
 
 pub async fn delete_board(
     user_ctx: UserContext,
-    Path(title_id): Path<u64>,
+    Path(title_id): Path<i64>,
     State(repos): State<Arc<Repositories>>,
 ) -> Result<Response, StatusCode> {
     let boards_repo = &repos.boards;
@@ -336,13 +336,13 @@ pub async fn delete_board(
 #[derive(Serialize)]
 pub struct BoardSummary {
     pub title: String,
-    pub id: u64,
+    pub id: i64,
 }
 
 #[derive(Serialize)]
 pub struct BoardTicketSummary {
     pub title: String,
-    pub id: u64,
+    pub id: i64,
     pub projectData: ProjectData,
 }
 
@@ -355,7 +355,7 @@ pub struct SavePayload {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Ticket {
-    pub id: Option<u64>,
+    pub id: Option<i64>,
     pub content: String,
 }
 

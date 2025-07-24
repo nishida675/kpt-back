@@ -17,5 +17,9 @@ chrono = { version = "0.4", features = ["serde"] }
 sqlx = { version = "0.7", features = ["runtime-tokio", "mysql", "macros", "chrono"] }
 argon2 = "0.5"
 async-session = "3"
-async-sqlx-session = { version = "0.4", features = ["mysql", "async_std"] }
 tower-http = { version = "0.5", features = ["cors"] }
+bb8 = "0.8"
+bb8-postgres = "0.8"
+tokio-postgres = { version = "0.7", features = ["with-chrono-0_4"] }
+anyhow = "1.0.98"
+async-sqlx-session = { version = "0.4", features = ["pg"] }

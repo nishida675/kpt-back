@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Ticket {
-    pub id: Option<u64>,
-    pub board_id: u64,
-    pub author_id: u64,
+    pub id: Option<i64>,
+    pub board_id: i64,
+    pub author_id: i64,
     pub category: String,
     pub content: String,
     pub created_at: NaiveDateTime,
@@ -15,9 +15,9 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn new(
-        id: Option<u64>,
-        board_id: u64,
-        author_id: u64,
+        id: Option<i64>,
+        board_id: i64,
+        author_id: i64,
         category: String,
         content: String,
         created_at: NaiveDateTime,
@@ -35,8 +35,8 @@ impl Ticket {
         }
     }
     pub fn create(
-        board_id: u64,
-        author_id: u64,
+        board_id: i64,
+        author_id: i64,
         category: String,
         content: String,
     ) -> Ticket {
@@ -58,7 +58,7 @@ impl Ticket {
         self.updated_at = Utc::now().naive_utc();
     }
 
-    pub fn id(&self) -> Option<u64> {
+    pub fn id(&self) -> Option<i64> {
         self.id
     }
 

@@ -1,3 +1,4 @@
+-- Mysql
 DROP TABLE IF EXISTS ticket;
 DROP TABLE IF EXISTS board;
 DROP TABLE IF EXISTS accounts;
@@ -31,13 +32,49 @@ CREATE TABLE ticket (
     FOREIGN KEY (author_id) REFERENCES accounts(id)
 );
 
-INSERT INTO accounts (password, display_name) VALUES
-('1', 'Alice'),
-('2', 'Bob'),
-('3', 'Charlie');
 
-INSERT INTO board (title, created_by) VALUES
-('プロジェクトAのKPT', 1),
-('サービス改善KPT', 1),
-('スプリント振り返り', 1);
 
+-- Postgres
+DROP TABLE IF EXISTS ticket;
+DROP TABLE IF EXISTS board;
+DROP TABLE IF EXISTS accounts;
+DROP TABLE IF EXISTS async_sessions;
+
+CREATE TABLE accounts (
+    id BIGSERIAL PRIMARY KEY,
+    password VARCHAR(256) NOT NULL,
+    display_name VARCHAR(16) NOT NULL
+);
+
+CREATE TABLE board (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    created_by BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (created_by) REFERENCES accounts(id)
+);
+
+CREATE TABLE ticket (
+    id BIGSERIAL PRIMARY KEY,
+    board_id BIGINT NOT NULL,
+    author_id BIGINT NOT NULL,
+    category TEXT CHECK (category IN ('Keep', 'Problem', 'Try')) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (board_id) REFERENCES board(id),
+    FOREIGN KEY (author_id) REFERENCES accounts(id)
+);
+
+
+
+CREATE TABLE async_sessions (
+    id TEXT PRIMARY KEY,
+    session TEXT NOT NULL,       
+    expires TIMESTAMPTZ
+);
+
+CREATE INDEX async_sessions_expires_idx ON async_sessions (expires);

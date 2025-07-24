@@ -1,13 +1,13 @@
 use argon2::{Argon2, password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, rand_core::OsRng, SaltString}};
 
 pub struct Account {
-    id: Option<u64>,
+    id: Option<i64>,
     pub hashed_password: String,
     pub display_name: String,
 }
 
 impl Account {
-    pub fn new(id: Option<u64>, hashed_password: String, display_name: String) -> Account {
+    pub fn new(id: Option<i64>, hashed_password: String, display_name: String) -> Account {
         Account {
             id,
             hashed_password,
@@ -23,7 +23,7 @@ impl Account {
         }
     }
 
-    pub fn id(&self) -> Option<u64> {
+    pub fn id(&self) -> Option<i64> {
         self.id
     }
 

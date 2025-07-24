@@ -7,9 +7,9 @@ use crate::request::UserContext;
 pub async fn get_all_tickets(
     repo: &impl Tickets,
     user: &UserContext,
-    board_id: u64,
+    board_id: i64,
 ) -> Result<Vec<Ticket>, String> {
-    let tickets = repo.find_by_board_id(board_id).await;
+    let tickets = repo.find_by_board_id(board_id).await?;
     Ok(tickets)
 }
 
@@ -39,7 +39,7 @@ pub async fn update_ticket(
 pub async fn delete_ticket(
     repo: &impl Tickets,
     user: &UserContext,
-    ticket_id: u64,
+    ticket_id: i64,
 ) -> Result<(), String> {
     let ticket = repo
         .find(ticket_id)
